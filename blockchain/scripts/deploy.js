@@ -8,7 +8,14 @@ async function main() {
 
   await voting.waitForDeployment();
 
-  console.log("Voting deployed to:", await voting.getAddress());
+  const address = await voting.getAddress();
+  console.log("Voting deployed to:", address);
+
+  // ✅ START VOTING IMMEDIATELY
+  const tx = await voting.startVoting();
+  await tx.wait();
+
+  console.log("✅ Voting has started");
 }
 
 main().catch((error) => {
