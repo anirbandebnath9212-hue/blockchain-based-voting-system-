@@ -1,19 +1,16 @@
 class Candidate {
-  final int id;
   final String name;
   final int voteCount;
 
   Candidate({
-    required this.id,
     required this.name,
     required this.voteCount,
   });
 
-  factory Candidate.fromBlockchain(dynamic data) {
+  factory Candidate.fromBlockchain(List<dynamic> data) {
     return Candidate(
-      id: data[0].toInt(),
-      name: data[1],
-      voteCount: data[2].toInt(),
+      name: data[0] as String,                 // ✅ "Alice"
+      voteCount: (data[1] as BigInt).toInt(),  // ✅ BigInt → int
     );
   }
 }

@@ -1,28 +1,58 @@
-import 'package:flutter/material.dart';
-import '../../models/candidate.dart';
+import 'package:flutter/foundation.dart';
+
 import '../../blockchain/voting_contract.dart';
-import '../../backend/api_service.dart';
+import '../../models/candidate.dart';
 
 class VotingProvider extends ChangeNotifier {
   final VotingContract _contract = VotingContract();
-  final ApiService _apiService = ApiService();
 
-  List<Candidate> candidates = [];
   bool loading = false;
+  String? error;
+  List<Candidate> candidates = [];
 
+  // -------------------------------
+  // LOAD CANDIDATES
+  // -------------------------------
   Future<void> loadCandidates() async {
     loading = true;
+    error = null;
     notifyListeners();
 
-    final data = await _contract.getCandidates();
-    candidates = data.map((e) => Candidate.fromBlockchain(e)).toList();
+    try {
+      final List<List<dynamic>> data =
+          await _contract.getCandidates(); // ✅ CORRECT METHOD
+
+      candidates = data.map((e) {
+        return Candidate(
+          name: e[0] as String,
+          voteCount: (e[1] as BigInt).toInt(),
+        );
+      }).toList();
+    } catch (e) {
+      error = e.toString();
+      candidates = [];
+    }
 
     loading = false;
     notifyListeners();
   }
 
-  Future<void> vote(int candidateId) async {
-    await _apiService.submitVote(candidateId);
-    await loadCandidates();
+  // -------------------------------
+  // VOTE
+  // -------------------------------
+  Future<void> vote(int candidateIndex) async {
+    loading = true;
+    error = null;
+    notifyListeners();
+
+    try {
+      await _contract.vote(candidateIndex);
+      await loadCandidates();
+    } catch (e) {
+      error = e.toString();
+    }
+
+    loading = false;
+    notifyListeners();
   }
 }

@@ -1,10 +1,9 @@
 class Env {
-  static const String rpcUrl =
-      "https://sepolia.infura.io/v3/YOUR_INFURA_KEY";
+  static const String rpcUrl = "http://127.0.0.1:8545/";
 
   static const String contractAddress =
-      "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+      "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
 
   static const String backendBaseUrl =
-      "https://your-backend.com";
+      "http://localhost:3000";
 }
